@@ -31,25 +31,23 @@ class Record:
         self.phones.append(Phone(phone))
 
     def edit_phone(self, old_phone: str, new_phone: str):
-        new_phone_obj = Phone(new_phone)  # validiert, kann ValueError werfen
-        for p in self.phones:
-            if p.value == old_phone:
-                p.value = new_phone_obj.value
-                return
-        raise ValueError(f"Old phone {old_phone} not found")
+        p = self.find_phone(old_phone)
+        if p is None:
+            raise ValueError(f"Old phone {old_phone} not found")
+        p.value = Phone(new_phone).value
 
     def find_phone(self, phone:str):
         for p in self.phones:
             if p.value == phone:
-                return Phone(phone)
+                return p
         return None
     
     def remove_phone(self, phone: str) -> bool:
-        for p in self.phones:
-            if p.value == phone:
-                self.phones.remove(p)
-                return True
-        return False
+        p = self.find_phone(phone)
+        if p is None:
+            raise ValueError("Nothing to remove")
+        self.phones.remove(p)
+        return True
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
@@ -98,6 +96,5 @@ john.edit_phone("5555555555", "1112223334")
 print(john)
 
 found_phone = john.find_phone("4445555222")
-print(f"{john.name}: {found_phone}") 
-
+print(f"{john.name}: {found_phone}")
 book.delete("Jane")
